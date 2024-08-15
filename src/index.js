@@ -7,8 +7,24 @@ import mongoose from 'mongoose';
 const app = express();
 dotenv.config({ path: "./env" });
 
-ConnectDB();
+ConnectDB()
+    .then(() => {
 
+        app.on('error', (error) => {
+            console.log('Error ' + error)
+        })
+
+        app.listen(process.env.PORT, () => {
+            console.log('Our app is runing at port ' + process.env.PORT)
+        })
+    })
+    .catch((err) => {
+        console.log('Mongodb connection faild ' + err)
+    })
+
+
+
+    
 /*
 (async () => {
 
