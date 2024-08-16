@@ -1,8 +1,9 @@
-class ApiResponse extends response {
-    constructor(statusCode, data, massage="Success"){
-        this.statusCode  = statusCode
+class ApiResponce {
+    constructor(data, massage = 'Success', statusCode) {
         this.massage = massage
         this.data = data
-        this.success = statusCode <400
+        this.success = statusCode < 400
     }
 }
+
+export { ApiResponce }
