@@ -8,7 +8,7 @@ const app = express();
 const ConnectDB = async () => {
     try {
 
-        const connectionInstance = await mongoose.connect(`mongodb+srv://maheshyogiweb:AuTU6QNX1wvpFNXW@cluster0.5sda5.mongodb.net//${DB_NAME}`);
+        const connectionInstance = await mongoose.connect(`mongodb+srv://maheshyogiweb:AuTU6QNX1wvpFNXW@cluster0.5sda5.mongodb.net/${DB_NAME}`);
         console.log(`Mongodb connected !! DB HOST ${connectionInstance.connection.host}`);
 
     } catch (error) {
@@ -17,5 +17,4 @@ const ConnectDB = async () => {
     }
 }
 
-ConnectDB();
 export default ConnectDB; 
