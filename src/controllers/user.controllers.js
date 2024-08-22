@@ -18,7 +18,7 @@ const userRegister = asyncHandler(async (req, res) => {
     res.status(200).json('OKay .')
     console.log('Email: ' + req.body.email)
 
-    if ([fullname, email, password, username].some((fields) => fields?.trime() === "")) {
+    if ([fullname, email, password, username].some((fields) => fields?.trim() === "")) {
         throw new ApiErrors(400, " All fields are required ")
     }
 
@@ -27,7 +27,7 @@ const userRegister = asyncHandler(async (req, res) => {
     })
 
     if (existedUser) {
-        throw new ApiErrors(409, " User or email is already exists");
+     throw new ApiErrors(409, " User or email is already exists");
     }
 
     const avatarLocalPath = req.files?.avatar[0]?.path;
@@ -42,8 +42,6 @@ const userRegister = asyncHandler(async (req, res) => {
 
     const user = await User.create({
         fullname,
-        avatar: avatar.url,
-        coverImage: coverImage?.url || '',
         email,
         password,
         username: username.toLowerCase()
