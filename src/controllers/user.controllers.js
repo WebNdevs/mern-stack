@@ -15,43 +15,53 @@ import { ApiResponce } from '../utils/ApiResponse.js';
 
 const userRegister = asyncHandler(async (req, res) => {
 
-    const { fullname, username, eamil, password } = req.body
+    const { fullName, username, email, password } = req.body
 
     if (
-        [fullname, username, eamil, password].some((field) => field?.trime() === '')
+        [fullName, username, email, password].some((field) => field?.trim() === '')
     ) {
         throw new ApiErrors(400, 'fill all the fields ');
     }
+    // console.log(fullName, username, email, password);
 
-    const userExisting = User.findOne({
-        $or: [{ username }, { eamil }]
+
+    const userExisting = await User.findOne({
+        $or: [{ username }, { email }]
     });
 
-    if (userExisting) {
-        throw new ApiErrors(409, 'User  already exists');
-    }
+    // if (userExisting) {
+    //     throw new ApiErrors(409, 'User already exists');
+    // }
+
 
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    const coverImageLocalPath = req.files?.coverImage?.[0]?.path ?? '';
 
+   
     if (!avatarLocalPath) {
-        throw new ApiErrors(400, "avatar file is requred");
+        throw new ApiErrors(400, " avatar file is requred with avatarLocalPath ");
     }
 
     const avatar = await uploadOnCloudinary(avatarLocalPath);
     const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
+    console.log(avatar.url + " File path")
+
+
+    return;
+
     if (!avatar) {
         throw new ApiErrors(400, "avatar file is required");
     }
 
+
     const user = await User.create({
-        fullname,
+        fullName,
         avatar: avatar.url,
         coverImage: coverImage?.url || '',
-        eamil,
+        email,
         password,
-        username: username.toLowerCase()
+        username,
     })
 
     const isUserCreated = await User.findById(user._id).select(
@@ -61,8 +71,6 @@ const userRegister = asyncHandler(async (req, res) => {
     if (!isUserCreated) {
         throw new ApiErrors(500, "Something went wrong while registring the user");
     }
-
-    await ApiResponce(200, 'User is registreted successfuly', isUserCreated, 200)
 
     return res.status(201).json(
         new ApiResponce(200, " User is registreted successfuly ", isUserCreated)
