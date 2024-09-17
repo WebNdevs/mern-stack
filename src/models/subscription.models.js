@@ -5,10 +5,10 @@ const subscriptionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
-    chanel:
+    channel:
     {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Chanel'
+        ref: 'User'
     }
 
 }, { timestamps: true })

@@ -22,7 +22,7 @@ const uploadOnCloudinary = async function (localFilePath) {
         })
 
         //File has been uploaded on Cloudinary
-        console.log("file is uploaded : " + response)
+        console.log("file is uploaded : " + response.url)
         fs.unlinkSync(localFilePath);
 
         return response;
@@ -33,5 +33,33 @@ const uploadOnCloudinary = async function (localFilePath) {
     }
 }
 
+const deleteCloudineryImage = async function (oldfilePath) {
 
-export default uploadOnCloudinary;
+    console.log(oldfilePath)
+    if (!oldfilePath) return null;
+
+    cloudinary.uploader.destroy(oldfilePath, { resource_type: "auto", type: 'authenticated' })
+    // fs.unlinkSync(oldfilePath);
+
+}
+
+
+const deleteCloudinaryImage = async (fileToDelete) => {
+    return new Promise((resolve) => {
+
+        cloudinary.uploader.destroy(fileToDelete, (error, result) => {
+            console.log('result :: ', result);
+            resolve({
+                url: result.secure_url,
+                asset_id: result.asset_id,
+                public_id: result.public_id,
+            }, {
+                resource_type: "auto",
+            })
+        })
+    })
+}
+
+
+
+export { uploadOnCloudinary, deleteCloudinaryImage };

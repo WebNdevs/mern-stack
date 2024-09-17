@@ -4,7 +4,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from 'jsonwebtoken';
 
 
-const veriryJWT = asyncHandler(async (req, _, next) => {
+const veriryJWT2 = asyncHandler(async (req, _, next) => {
 
     // console.log(req.cookies.accessToken)
     try {
@@ -26,6 +26,30 @@ const veriryJWT = asyncHandler(async (req, _, next) => {
         throw new ApiErrors(401, error.message || "Invaild access token");
     }
 
+})
+
+const veriryJWT = asyncHandler(async (req, _, next) => {
+    const token = req?.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", '');
+
+    try {
+        if (!token || token == undefined || token == null) {
+            throw new ApiErrors(401, "  Unauthorized request while cookies logout  ")
+        }
+
+        const decodedToken = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+        if (!decodedToken) {
+            throw new ApiErrors(400, " Invailid access token ");
+        }
+
+        const user = await User.findById(decodedToken._id).select(" -password -refreshToken ");
+
+        req.user = user;
+        next()
+
+    } catch (error) {
+        throw new ApiErrors(400, "Invalid access Token " + error?.message || "Invalid access Token ");
+    }
 })
 
 export default veriryJWT;
